@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lio - Student Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        input, button { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #218838; }
+        .result-item { border-bottom: 1px solid #ccc; padding: 15px 0; }
+        .download-btn { background-color: #007bff; padding: 8px; text-decoration: none; color: white; border-radius: 4px; display: inline-block; margin-top: 10px;}
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Lio - Search Study Materials</h2>
+        
+        <input type="text" id="searchInput" placeholder="Search by Subject or Professor (e.g., Math, Smith)">
+        <button onclick="performSearch()">Search</button>
+
+        <div id="resultsList"></div>
+    </div>
+
+    <script>
+        async function performSearch() {
+            let query = document.getElementById('searchInput').value;
+            let resultsDiv = document.getElementById('resultsList');
+            resultsDiv.innerHTML = "Searching..."; // Loading text
+
+            try {
+                // Call our Java search API
+                let response = await fetch('/api/materials/search?query=' + query);
+                let materials = await response.json();
+
+                resultsDiv.innerHTML = ""; // Clear loading text
+
+                if (materials.length === 0) {
+                    resultsDiv.innerHTML = "<p>No materials found.</p>";
+                    return;
+                }
+
+                // Loop through the results and create a download card for each one
+                materials.forEach(material => {
+                    resultsDiv.innerHTML += `
+                        <div class="result-item">
+                            <h3>${material.title}</h3>
+                            <p><strong>Subject:</strong> ${material.subject}</p>
+                            <p><strong>Professor:</strong> ${material.professorName}</p>
+                            <a href="/api/materials/download/${material.id}" class="download-btn">Download File</a>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                resultsDiv.innerHTML = "<p>Error connecting to the server.</p>";
+            }
+        }
+    </script>
+</body>
+</html>

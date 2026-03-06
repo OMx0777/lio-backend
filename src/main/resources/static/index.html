@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lio - Professor Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        input, select, button { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Lio - Upload Study Material</h2>
+        
+        <form id="uploadForm">
+            <input type="text" id="title" placeholder="Material Title (e.g., Midterm Notes)" required>
+            <input type="text" id="subject" placeholder="Subject Name" required>
+            <input type="text" id="professorName" placeholder="Your Name" required>
+            
+            <input type="file" id="file" required>
+            
+            <button type="submit">Upload File</button>
+        </form>
+    </div>
+
+<script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Stop the page from refreshing
+
+            // Gather the data from the form
+            let formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('subject', document.getElementById('subject').value);
+            formData.append('professorName', document.getElementById('professorName').value);
+            formData.append('file', document.getElementById('file').files[0]);
+
+            try {
+                // Send it to your Java backend
+                let response = await fetch('/api/materials/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                let resultText = await response.text();
+                alert(resultText); // Show a popup with the success message
+                
+                // Clear the form for the next upload
+                document.getElementById('uploadForm').reset(); 
+            } catch (error) {
+                alert("Error uploading file!");
+            }
+        });
+    </script>
+
+
+</body>
+</html>
