@@ -1,5 +1,5 @@
-# Use OpenJDK 17 (standard for Spring Boot)
-FROM openjdk:17-jdk-slim
+# Use Eclipse Temurin JDK 17 (the modern, supported standard)
+FROM eclipse-temurin:17-jdk-jammy
 
 # Copy the gradle wrapper and build files
 COPY . .
